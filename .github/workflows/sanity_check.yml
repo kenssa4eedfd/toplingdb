@@ -1,5 +1,9 @@
 name: Check buck targets and code format
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - memtable_as_log_index
+  pull_request:
 permissions:
   contents: read
 
