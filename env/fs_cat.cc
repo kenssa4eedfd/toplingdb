@@ -12,7 +12,6 @@ namespace ROCKSDB_NAMESPACE {
 
 IOStatus CopyAcrossFS(FileSystem* dest, FileSystem* src,
                       const std::string& fname, IODebugContext* dbg) {
-  using namespace std;
   uint64_t size = 0; // file size
   FileOptions fo; fo.temperature = Temperature::kWarm;
   std::unique_ptr<FSSequentialFile> srcfile;
@@ -26,24 +25,22 @@ IOStatus CopyAcrossFS(FileSystem* dest, FileSystem* src,
   if (!ios.ok()) {
     return ios;
   }
-  // we have using namespace std;
-  // fuck clang warns on use `move` instead of `std::move`
-  auto src_reader = make_unique<SequentialFileReader>(std::move(srcfile), fname);
+  auto src_reader =
+      std::make_unique<SequentialFileReader>(std::move(srcfile), fname);
   std::unique_ptr<FSWritableFile> dstfile;
   ios = dest->NewWritableFile(fname, fo, &dstfile, dbg);
   if (!ios.ok()) {
     return ios;
   }
-  // we have using namespace std;
-  // fuck clang warns on use `move` instead of `std::move`
-  auto dest_writer = make_unique<WritableFileWriter>(std::move(dstfile), fname, fo);
+  auto dest_writer =
+      std::make_unique<WritableFileWriter>(std::move(dstfile), fname, fo);
   const size_t bufsize = 1024 * 1024;
 #if defined(_MSC_VER)
   char* buffer = (char*)_aligned_malloc(bufsize, 4096);
   ROCKSDB_SCOPE_EXIT(_aligned_free(buffer));
 #else
   char* buffer = (char*)std::aligned_alloc(4096, bufsize);
-  ROCKSDB_SCOPE_EXIT(free(buffer));
+  ROCKSDB_SCOPE_EXIT(std::free(buffer));
 #endif
   Slice slice;
   while (size > 0) {

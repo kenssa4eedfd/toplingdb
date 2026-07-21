@@ -12,7 +12,18 @@
 #include <topling/side_plugin_repo.h>
 #include <topling/side_plugin_factory.h>
 
-using namespace rocksdb;
+using ROCKSDB_NAMESPACE::ColumnFamilyHandle;
+using ROCKSDB_NAMESPACE::ColumnFamilyOptions;
+using ROCKSDB_NAMESPACE::DB;
+using ROCKSDB_NAMESPACE::DBOptions;
+using ROCKSDB_NAMESPACE::DB_MultiCF;
+using ROCKSDB_NAMESPACE::DB_Ptr;
+using ROCKSDB_NAMESPACE::ExportImportFilesMetaData;
+using ROCKSDB_NAMESPACE::ImportColumnFamilyOptions;
+using ROCKSDB_NAMESPACE::Options;
+using ROCKSDB_NAMESPACE::RocksDBExceptionJni;
+using ROCKSDB_NAMESPACE::SidePluginRepo;
+using ROCKSDB_NAMESPACE::Status;
 
 static jlong GetNativeHandle(JNIEnv* env, jobject jobj) {
   jclass clazz = env->GetObjectClass(jobj);
@@ -106,7 +117,7 @@ jobject Java_org_rocksdb_SidePluginRepo_nativeOpenDB
 {
   DB* db = nullptr;
   auto repo = (SidePluginRepo*)nativeHandle;
-  rocksdb::Status status;
+  Status status;
   if (jdbname) {
     const auto* dbname = env->GetStringUTFChars(jdbname, nullptr);
     ROCKSDB_VERIFY(dbname != nullptr);
@@ -133,7 +144,7 @@ jobject Java_org_rocksdb_SidePluginRepo_nativeOpenDBMultiCF
 {
   DB_MultiCF* dbm = nullptr;
   auto repo = (SidePluginRepo*)nativeHandle;
-  rocksdb::Status status;
+  Status status;
   if (jdbname) {
     const auto* dbname = env->GetStringUTFChars(jdbname, nullptr);
     ROCKSDB_VERIFY(dbname != nullptr);

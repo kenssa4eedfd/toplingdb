@@ -380,14 +380,14 @@ IOStatus WritableFileWriter::Close() {
       terark::StrDateTimeNow(), file_name_.c_str(), (long long)filesize_,
       (long long)writable_file_->GetFileSize(io_options, nullptr));
   }
-  using namespace std::chrono;
   auto slow_ms = terark::getEnvLong("WritableFileWriterSlowCloseMS", 5000);
   auto close_tm = finish_ts - start_ts.second;
-  if (close_tm > milliseconds(slow_ms)) {
+  if (close_tm > std::chrono::milliseconds(slow_ms)) {
     fprintf(stderr, "WARN: %s: WritableFileWriter::Close(%s): "
       "fsize = %.6f M, file close = %.6f seconds\n",
       terark::StrDateTimeNow(), file_name_.c_str(), filesize_/1e6,
-      duration_cast<microseconds>(close_tm).count()/1e6);
+      std::chrono::duration_cast<std::chrono::microseconds>(close_tm).count() /
+          1e6);
   }
   if (!interim.ok() && s.ok()) {
     s = interim;

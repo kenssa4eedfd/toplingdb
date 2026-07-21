@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <rocksdb/file_system.h>
+#include "rocksdb/file_system.h"
 
 namespace ROCKSDB_NAMESPACE {
 
@@ -122,4 +122,3 @@ private:
 };
 
 }  // namespace ROCKSDB_NAMESPACE
-

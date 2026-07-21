@@ -829,15 +829,15 @@ void PointLockManager::UnLock(PessimisticTransaction* txn,
     LockMap* lock_map = GetLockMap(cf_id);
     if (!lock_map) continue;
     const uint32_t nil = UINT32_MAX;
-    using namespace terark;
     const size_t max_key_idx = keyinfos.end_i();
     const size_t num_stripes = lock_map->lock_map_stripes_.size();
     auto stripe_heads = new uint32_t[num_stripes]; // note: delete at loop end
     std::fill_n(stripe_heads, num_stripes, nil);
-    valvec<uint32_t> keys_link(max_key_idx, valvec_no_init());
+    terark::valvec<uint32_t> keys_link(max_key_idx,
+                                       terark::valvec_no_init());
     for (size_t idx = 0; idx < max_key_idx; idx++) {
       if (!keyinfos.is_deleted(idx)) {
-        const fstring key = keyinfos.key(idx);
+        const terark::fstring key = keyinfos.key(idx);
         const auto&   val = keyinfos.val(idx);
         size_t strip_idx = lock_map->GetStripe(key, val.key_hash);
         keys_link[idx] = stripe_heads[strip_idx]; // insert to single
@@ -850,7 +850,7 @@ void PointLockManager::UnLock(PessimisticTransaction* txn,
       LockMapStripe* stripe = &lock_map->lock_map_stripes_[strip_idx];
       stripe->stripe_mutex->Lock().PermitUncheckedError();
       for (uint32_t idx = head; nil != idx; idx = keys_link[idx]) {
-        const fstring key = keyinfos.key(idx);
+        const terark::fstring key = keyinfos.key(idx);
         const auto&   val = keyinfos.val(idx);
         UnLockKey(txn, key, val.key_hash, stripe, lock_map, env);
       }

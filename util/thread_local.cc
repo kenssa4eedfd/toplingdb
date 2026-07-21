@@ -20,7 +20,7 @@
 
 #include "port/likely.h"
 #include "util/mutexlock.h"
-#include <rocksdb/preproc.h>
+#include "rocksdb/preproc.h"
 
 namespace ROCKSDB_NAMESPACE {
 

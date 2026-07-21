@@ -391,9 +391,9 @@ int main(int argc, char** argv) {
     memtab_opt = R"(cspp:{"chunk_size":4})"; // default cspp conf
   }
   if (strncmp(memtab_opt, "cspp:", 5) == 0) {
-    using namespace ROCKSDB_NAMESPACE;
    #ifdef HAS_TOPLING_CSPP_MEMTABLE
-    g_cspp_fac.reset(NewCSPPMemTabForPlain(memtab_opt + 5));
+    ROCKSDB_NAMESPACE::g_cspp_fac.reset(
+        ROCKSDB_NAMESPACE::NewCSPPMemTabForPlain(memtab_opt + 5));
     fprintf(stderr, "MemTableTest: %s\n", memtab_opt);
    #else
     fprintf(stderr, "env MemTableRepFactory is cspp but HAS_TOPLING_CSPP_MEMTABLE is not defined\n");

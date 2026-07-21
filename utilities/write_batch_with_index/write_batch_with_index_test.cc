@@ -2813,13 +2813,13 @@ int main(int argc, char** argv) {
   ROCKSDB_NAMESPACE::port::InstallStackTraceHandler();
   ::testing::InitGoogleTest(&argc, argv);
  #if defined(HAS_TOPLING_CSPP_WBWI)
-  using namespace ROCKSDB_NAMESPACE;
   int ret = RUN_ALL_TESTS();
   if (terark::getEnvBool("SKIP_CSPP_WBWI")) {
     return ret;
   }
-  g_fac.reset(NewCSPP_WBWIForPlain("{}"));
-  g_test_with_ts = false;
+  ROCKSDB_NAMESPACE::g_fac.reset(
+      ROCKSDB_NAMESPACE::NewCSPP_WBWIForPlain("{}"));
+  ROCKSDB_NAMESPACE::g_test_with_ts = false;
   fprintf(stderr, "Testing CSPP_WBWI...\n");
  #endif
   return RUN_ALL_TESTS();
