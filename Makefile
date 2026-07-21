@@ -440,6 +440,7 @@ GIT_TOPLING_ROCKS ?= git@github.com:rockeet/topling-rocks
 ifndef WITH_TOPLING_ROCKS
   # auto check
   ifeq (,$(wildcard sideplugin/topling-rocks))
+   ifneq (${UPDATE_REPO},0)
     # topling specific: just for people who has permission to topling-rocks
     dummy := $(shell set -e -x; \
       cd sideplugin; \
@@ -447,6 +448,7 @@ ifndef WITH_TOPLING_ROCKS
       cd topling-rocks; \
       git submodule update --init --recursive \
     )
+   endif
   else
     ifeq (,$(wildcard sideplugin/topling-rocks/src/table/top_patent_algo.cc))
       dummy := $(shell rm -rf sideplugin/topling-rocks)
@@ -470,12 +472,14 @@ CXXFLAGS += -DHAS_TOPLING_ROCKS
 endif
 
 ifeq (,$(wildcard sideplugin/cspp-memtable))
+ ifneq (${UPDATE_REPO},0)
   # topling specific: just for people who has permission to cspp-memtable
   dummy := $(shell set -e -x; \
     cd sideplugin; \
     git clone https://github.com/topling/cspp-memtable; \
     cd cspp-memtable; \
   )
+ endif
 else
   ifneq (${UPDATE_REPO},0)
    ifeq (${MAKE_RESTARTS},)
@@ -1155,8 +1159,8 @@ TOOL_OBJECTS = $(patsubst %.cc, $(OBJ_DIR)/%.o, $(TOOL_LIB_SOURCES))
 ANALYZE_OBJECTS = $(patsubst %.cc, $(OBJ_DIR)/%.o, $(ANALYZER_LIB_SOURCES))
 STRESS_OBJECTS =  $(patsubst %.cc, $(OBJ_DIR)/%.o, $(STRESS_LIB_SOURCES))
 
-# Exclude build_version.cc -- a generated source file -- from all sources.  Not needed for dependencies
-ALL_SOURCES  = $(filter-out util/build_version.cc, $(LIB_SOURCES)) $(TEST_LIB_SOURCES) $(MOCK_LIB_SOURCES) $(GTEST_DIR)/gtest/gtest-all.cc
+# Exclude generated and prebuilt sources that do not need dependencies.
+ALL_SOURCES  = $(filter-out util/build_version.cc sideplugin/topling-zip_table_reader/cspp_memtable.cc, $(LIB_SOURCES)) $(TEST_LIB_SOURCES) $(MOCK_LIB_SOURCES) $(GTEST_DIR)/gtest/gtest-all.cc
 ALL_SOURCES += $(TOOL_LIB_SOURCES) $(BENCH_LIB_SOURCES) $(CACHE_BENCH_LIB_SOURCES) $(ANALYZER_LIB_SOURCES) $(STRESS_LIB_SOURCES)
 ALL_SOURCES += $(TEST_MAIN_SOURCES) $(TOOL_MAIN_SOURCES) $(BENCH_MAIN_SOURCES)
 ALL_SOURCES += $(ROCKSDB_PLUGIN_SOURCES) $(ROCKSDB_PLUGIN_TESTS)
