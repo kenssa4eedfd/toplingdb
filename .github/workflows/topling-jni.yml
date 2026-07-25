@@ -67,7 +67,7 @@ jobs:
          git submodule update --init --recursive
          # The CSPP repositories are private. Keep their optional plugins
          # disabled while building the public Easy Config/rockside feature.
-         mkdir -p sideplugin/cspp-memtable sideplugin/cspp-wbwi
+         mkdir -p sideplugin/cspp-memtable
          mkdir -p ~/.ssh && mkdir -p /opt/lib
          ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
          echo nproc = `nproc`
