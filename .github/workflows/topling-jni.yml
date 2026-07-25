@@ -65,6 +65,9 @@ jobs:
       - name: Init submodule & Setup ssh
         run: |
          git submodule update --init --recursive
+         # The CSPP repositories are private. Keep their optional plugins
+         # disabled while building the public Easy Config/rockside feature.
+         mkdir -p sideplugin/cspp-memtable sideplugin/cspp-wbwi
          mkdir -p ~/.ssh && mkdir -p /opt/lib
          ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
          echo nproc = `nproc`
@@ -76,7 +79,7 @@ jobs:
           # there is no dedicated target for this purpose, so we use `clean`
           # as the target, it need not any `clean` at this point.
           # `clean` is just used for triggers auto git clone
-          make clean
+          make clean WITH_TOPLING_ROCKS=0 WITH_CSPP_MEMTABLE=0
 
       - name: make depend for Compile Unit Test
         if: ${{ inputs.unit_test }}
@@ -107,6 +110,7 @@ jobs:
           env USE_LTO=${{inputs.use_lto}} \
           make depend java/include/java_header_list.mk \
                -j`nproc` DEBUG_LEVEL=0 UPDATE_REPO=0 \
+               WITH_TOPLING_ROCKS=0 WITH_CSPP_MEMTABLE=0 \
                DISABLE_JEMALLOC=1 TOPLING_USE_DYNAMIC_TLS=1 \
                STRIP_DEBUG_INFO=1 ROCKSDB_JAR_WITH_DYNAMIC_LIBS=1
 
@@ -116,6 +120,7 @@ jobs:
           set -xe
           env USE_LTO=${{inputs.use_lto}} \
           make rocksdbjava -j`nproc` DEBUG_LEVEL=0 UPDATE_REPO=0 \
+               WITH_TOPLING_ROCKS=0 WITH_CSPP_MEMTABLE=0 \
                DISABLE_JEMALLOC=1 TOPLING_USE_DYNAMIC_TLS=1 \
                STRIP_DEBUG_INFO=1 ROCKSDB_JAR_WITH_DYNAMIC_LIBS=1
           ROCKSDB_VERSION=`build_tools/version.sh full`
